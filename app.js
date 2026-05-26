@@ -10,7 +10,7 @@ const DEFAULT_ANNUAL_PACKAGES = Math.max(
 const DEFAULTS = {
   companyName: "",
   annualPackagesManual: DEFAULT_ANNUAL_PACKAGES,
-  hourlyRate: 57.6,
+  hourlyRate: 50,
   curationUsers: DEFAULT_USER_BASELINE,
   jasUsers: DEFAULT_USER_BASELINE,
   riskAdjustment: 20,
@@ -180,7 +180,7 @@ function applyFinance(grossBenefit, investment, riskAdjustment) {
   const riskAdjustedBenefit = grossBenefit * (1 - riskAdjustment / 100);
   const netSavings = riskAdjustedBenefit - investment;
   const roi = investment > 0 ? netSavings / investment : 0;
-  const paybackMonths = netSavings > 0 && investment > 0 ? (investment / netSavings) * 12 : 0;
+  const paybackMonths = riskAdjustedBenefit > investment ? (investment / riskAdjustedBenefit) * 12 : 0;
   return { riskAdjustedBenefit, netSavings, roi, paybackMonths };
 }
 

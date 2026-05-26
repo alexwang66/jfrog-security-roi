@@ -24,6 +24,14 @@
         <form id="roi-form" class="panel controls" novalidate>
           <h2>Quick Inputs (Developer-Friendly)</h2>
 
+          <div class="report-mode">
+            <span class="mode-label">Report Mode</span>
+            <div class="report-toggle" role="tablist" aria-label="Report selector">
+              <button type="button" id="toggle-curation" class="toggle-btn is-active">Curation</button>
+              <button type="button" id="toggle-jas" class="toggle-btn">JAS</button>
+            </div>
+          </div>
+
           <label>Average Fully-Burdened Hourly Rate (USD/hour)
             <input id="hourlyRate" type="number" min="1" step="0.1" />
           </label>
@@ -83,10 +91,6 @@
           <div class="report-head">
             <div>
               <h2 id="report-title">Executive ROI Summary</h2>
-              <div class="report-toggle" role="tablist" aria-label="Report selector">
-                <button type="button" id="toggle-curation" class="toggle-btn is-active">Curation</button>
-                <button type="button" id="toggle-jas" class="toggle-btn">JAS</button>
-              </div>
               <p id="report-subtitle"></p>
             </div>
             <div class="report-actions">

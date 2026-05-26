@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Curation ROI Executive Report</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">JFrog Curation Business Case</p>
+          <h1>Curation Cost-Savings Executive Report</h1>
+          <p class="subtitle">Minimal inputs, automatic leadership-ready ROI charts, and PDF export.</p>
+        </div>
+        <div class="hero-badge">
+          <span>Leader Ready</span>
+          <strong>ROI + Chart + PDF</strong>
+        </div>
+      </section>
+
+      <section class="layout">
+        <form id="roi-form" class="panel controls" novalidate>
+          <h2>Quick Inputs (Developer-Friendly)</h2>
+
+          <label>Average Fully-Burdened Hourly Rate (USD/hour)
+            <input id="hourlyRate" type="number" min="1" step="0.1" />
+          </label>
+
+          <section class="input-group" id="curation-inputs">
+            <h3 class="group-title">Curation Inputs</h3>
+            <label>Curation User Number
+              <span
+                class="info-icon"
+                title="Billed in packs of 50 users per year."
+                aria-label="Billed in packs of 50 users per year."
+                tabindex="0"
+                >i</span
+              >
+              <input id="curationUsers" type="number" min="1" step="1" />
+              <small>$27,000 per 50 users/year (rounded up by user pack)</small>
+              <small id="curationAnnualCostHint"></small>
+            </label>
+          </section>
+
+          <section class="input-group" id="jas-inputs">
+            <h3 class="group-title">JAS Inputs</h3>
+            <label>JAS User Number
+              <span
+                class="info-icon"
+                title="Billed in packs of 50 users per year."
+                aria-label="Billed in packs of 50 users per year."
+                tabindex="0"
+                >i</span
+              >
+              <input id="jasUsers" type="number" min="1" step="1" />
+              <small>$27,000 per 50 users/year (rounded up by user pack)</small>
+              <small id="jasAnnualCostHint"></small>
+            </label>
+          </section>
+
+          <input id="annualPackagesManual" type="hidden" />
+
+          <p class="hint" id="totalAnnualCostHint"></p>
+
+          <label>Risk Adjustment (% conservative discount)
+            <input id="riskAdjustment" type="number" min="0" max="80" step="1" />
+          </label>
+
+          <label>Organization Name (Optional)
+            <input id="companyName" type="text" />
+          </label>
+
+          <div class="actions">
+            <button type="button" id="preset-btn">Reset Defaults</button>
+          </div>
+          <p id="form-warning" class="warning"></p>
+          <p class="hint">Model baseline follows the Dell/JFrog Curation value assessment deck you provided.</p>
+        </form>
+
+        <section class="panel report" id="report-root">
+          <div class="report-head">
+            <div>
+              <h2 id="report-title">Executive ROI Summary</h2>
+              <div class="report-toggle" role="tablist" aria-label="Report selector">
+                <button type="button" id="toggle-curation" class="toggle-btn is-active">Curation</button>
+                <button type="button" id="toggle-jas" class="toggle-btn">JAS</button>
+              </div>
+              <p id="report-subtitle"></p>
+            </div>
+            <div class="report-actions">
+              <span id="report-company" class="company-chip" hidden></span>
+              <button type="button" id="export-pdf-btn">Export PDF</button>
+            </div>
+          </div>
+
+          <section class="product-report" id="curation-report">
+            <h3 class="product-title">Curation Report</h3>
+            <section class="exec-summary">
+              <h3>Executive Summary</h3>
+              <ul id="curation-summary-list"></ul>
+            </section>
+
+            <div class="kpis">
+              <article>
+                <p>Annual Net Savings</p>
+                <strong id="curation-kpi-savings">$0</strong>
+              </article>
+              <article>
+                <p>Annual Hours Saved</p>
+                <strong id="curation-kpi-hours">0</strong>
+              </article>
+              <article>
+                <p>ROI Multiple</p>
+                <strong id="curation-kpi-roi">0x</strong>
+              </article>
+              <article>
+                <p>Payback Period</p>
+                <strong id="curation-kpi-payback">0 months</strong>
+              </article>
+            </div>
+
+            <div class="summary-box" id="curation-summary-box"></div>
+
+            <div class="charts">
+              <article class="chart-card">
+                <h3>Chart 1: Curation Cost and Benefit Comparison</h3>
+                <div id="curation-chart-before-after" class="compare-bars"></div>
+              </article>
+              <article class="chart-card">
+                <h3>Chart 2: Curation Savings by Category</h3>
+                <div id="curation-chart-breakdown" class="breakdown-bars"></div>
+              </article>
+              <article class="chart-card">
+                <h3>Chart 3: Curation Cost Leakage by SDLC Stage</h3>
+                <div id="curation-chart-stage-leakage" class="stage-bars"></div>
+              </article>
+            </div>
+          </section>
+
+          <section class="product-report" id="jas-report" hidden>
+            <h3 class="product-title">JAS Report</h3>
+            <section class="exec-summary">
+              <h3>Executive Summary</h3>
+              <ul id="jas-summary-list"></ul>
+            </section>
+
+            <div class="kpis">
+              <article>
+                <p>Annual Net Savings</p>
+                <strong id="jas-kpi-savings">$0</strong>
+              </article>
+              <article>
+                <p>Annual Hours Saved</p>
+                <strong id="jas-kpi-hours">0</strong>
+              </article>
+              <article>
+                <p>ROI Multiple</p>
+                <strong id="jas-kpi-roi">0x</strong>
+              </article>
+              <article>
+                <p>Payback Period</p>
+                <strong id="jas-kpi-payback">0 months</strong>
+              </article>
+            </div>
+
+            <div class="summary-box" id="jas-summary-box"></div>
+
+            <div class="charts">
+              <article class="chart-card">
+                <h3>Chart 1: JAS Cost and Benefit Comparison</h3>
+                <div id="jas-chart-before-after" class="compare-bars"></div>
+              </article>
+              <article class="chart-card">
+                <h3>Chart 2: JAS Savings by Capability</h3>
+                <div id="jas-chart-breakdown" class="breakdown-bars"></div>
+              </article>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>

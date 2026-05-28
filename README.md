@@ -17,7 +17,8 @@ Supports **English / 中文** language toggle.
 cd jfrog-security-roi
 
 # Start a local server on port 8080
-python3 -m http.server 8080
+nohup python3 -m http.server 8080 > /tmp/jfrog-roi-http.log 2>&1 &
+echo $! > /tmp/jfrog-roi-http.pid
 ```
 
 Then open your browser at:

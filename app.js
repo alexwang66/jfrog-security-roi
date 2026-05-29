@@ -13,7 +13,6 @@ const DEFAULTS = {
   hourlyRate: 50,
   curationUsers: DEFAULT_USER_BASELINE,
   jasUsers: DEFAULT_USER_BASELINE,
-  riskAdjustment: 20,
 };
 
 const DISCOVERY_PROFILES = {
@@ -73,7 +72,6 @@ const T = {
     packPriceHint:      "$27,000 per 50 users/year (rounded up by user pack)",
     jasInputsTitle:     "JAS Inputs",
     jasUsersLabel:      "JAS User Number",
-    riskAdjLabel:       "Risk Adjustment (% conservative discount)",
     companyNameLabel:   "Organization Name (Optional)",
     resetBtn:           "Reset Defaults",
     modelHint:          "Model baseline follows the Dell/JFrog Curation value assessment deck you provided.",
@@ -127,28 +125,26 @@ const T = {
     // Bar chart row labels
     barNoCuration:       "No Curation remediation cost",
     barWithCuration:     "With Curation remediation cost",
-    barCurationBenefit:  "Risk-adjusted Curation annual benefit",
+    barCurationBenefit:  "Curation annual benefit",
     barCurationInvestment:"Calculated Curation investment",
-    barJASBenefit:       "Risk-adjusted JAS annual benefit",
+    barJASBenefit:       "JAS annual benefit",
     barJASInvestment:    "Calculated JAS investment",
     barJASNet:           "Net annual JAS savings",
     // Summary list sentence builders
     curationPricingLine: (users, units, pack, cost) =>
       `Curation pricing input: ${users} users (${units} × ${pack}-user packs) = ${cost}/year.`,
-    curationRiskLine:    (val)  => `Risk-adjusted annual Curation value: ${val}.`,
     curationNetLine:     (val)  => `Net annual Curation savings: ${val}.`,
     curationTopLine:     (name, cost, hrs) =>
       `Top Curation savings driver: ${name} (${cost} / ${hrs} h).`,
     curationSummaryBox:  (users, cost, net) =>
-      `Curation annual investment is calculated from users: ${users} users => ${cost} per year. Expected net annual value is ${net} after risk adjustment.`,
+      `Curation annual investment: ${users} users => ${cost} per year. Expected net annual value: ${net}.`,
     jasPricingLine:      (users, units, pack, cost) =>
       `JAS pricing input: ${users} users (${units} × ${pack}-user packs) = ${cost}/year.`,
-    jasRiskLine:         (val)  => `Risk-adjusted annual JAS value: ${val}.`,
     jasNetLine:          (val)  => `Net annual JAS savings: ${val}.`,
     jasTopLine:          (name, cost, hrs) =>
       `Top JAS capability driver: ${name} (${cost} / ${hrs} h).`,
     jasSummaryBox:       (users, cost, net) =>
-      `JAS annual investment is calculated from users: ${users} users => ${cost} per year. Expected net annual value is ${net} after risk adjustment.`,
+      `JAS annual investment: ${users} users => ${cost} per year. Expected net annual value: ${net}.`,
   },
   zh: {
     eyebrow:            "JFrog Curation 商业案例",
@@ -164,7 +160,6 @@ const T = {
     packPriceHint:      "每50用户/年 $27,000（按用户包向上取整）",
     jasInputsTitle:     "JAS 参数",
     jasUsersLabel:      "JAS 用户数",
-    riskAdjLabel:       "风险调整（保守折扣百分比）",
     companyNameLabel:   "组织名称（可选）",
     resetBtn:           "恢复默认值",
     modelHint:          "模型基准来自您提供的 Dell/JFrog Curation 价值评估报告。",
@@ -218,28 +213,26 @@ const T = {
     // Bar chart row labels
     barNoCuration:        "无Curation修复成本",
     barWithCuration:      "有Curation修复成本",
-    barCurationBenefit:   "风险调整后Curation年收益",
+    barCurationBenefit:   "Curation年收益",
     barCurationInvestment:"Curation年度投资",
-    barJASBenefit:        "风险调整后JAS年收益",
+    barJASBenefit:        "JAS年收益",
     barJASInvestment:     "JAS年度投资",
     barJASNet:            "JAS年净节省",
     // Summary list sentence builders
     curationPricingLine: (users, units, pack, cost) =>
       `Curation定价输入：${users}用户（${units}×${pack}用户包）= ${cost}/年。`,
-    curationRiskLine:    (val)  => `风险调整后年度Curation价值：${val}。`,
     curationNetLine:     (val)  => `年度Curation净节省：${val}。`,
     curationTopLine:     (name, cost, hrs) =>
       `Curation最大节省驱动因素：${name}（${cost} / ${hrs}小时）。`,
     curationSummaryBox:  (users, cost, net) =>
-      `Curation年度投入基于用户数计算：${users}用户 => ${cost}/年。风险调整后预期年净价值为${net}。`,
+      `Curation年度投入：${users}用户 => ${cost}/年。预期年净价值：${net}。`,
     jasPricingLine:      (users, units, pack, cost) =>
       `JAS定价输入：${users}用户（${units}×${pack}用户包）= ${cost}/年。`,
-    jasRiskLine:         (val)  => `风险调整后年度JAS价值：${val}。`,
     jasNetLine:          (val)  => `年度JAS净节省：${val}。`,
     jasTopLine:          (name, cost, hrs) =>
       `JAS最大能力驱动因素：${name}（${cost} / ${hrs}小时）。`,
     jasSummaryBox:       (users, cost, net) =>
-      `JAS年度投入基于用户数计算：${users}用户 => ${cost}/年。风险调整后预期年净价值为${net}。`,
+      `JAS年度投入：${users}用户 => ${cost}/年。预期年净价值：${net}。`,
   },
 };
 
@@ -338,7 +331,6 @@ function parseInputs() {
     discoveryProfile:     "late",
     curationUsers:        parseNumber("curationUsers"),
     jasUsers:             parseNumber("jasUsers"),
-    riskAdjustment:       parseNumber("riskAdjustment"),
   };
 }
 
@@ -360,8 +352,6 @@ function zeroOutActiveReport() {
 function validate(input) {
   if (!Number.isFinite(input.hourlyRate) || input.hourlyRate <= 0)
     return "Hourly rate must be greater than 0.";
-  if (!Number.isFinite(input.riskAdjustment) || input.riskAdjustment < 0 || input.riskAdjustment > 80)
-    return "Risk adjustment should be between 0% and 80%.";
   if (activeReport === "curation") {
     if (!Number.isFinite(input.annualPackagesManual) || input.annualPackagesManual <= 0)
       return "Annual OSS package count must be greater than 0.";
@@ -401,13 +391,11 @@ function updateAnnualCostHints() {
   totalAnnualCostHint.textContent = t("totalAnnualCost")(CURRENCY.format(total));
 }
 
-function applyFinance(grossBenefit, investment, riskAdjustment) {
-  const riskAdjustedBenefit = grossBenefit * (1 - riskAdjustment / 100);
-  const netSavings          = riskAdjustedBenefit - investment;
-  const roi                 = investment > 0 ? netSavings / investment : 0;
-  const paybackMonths       = riskAdjustedBenefit > investment
-    ? (investment / riskAdjustedBenefit) * 12 : 0;
-  return { riskAdjustedBenefit, netSavings, roi, paybackMonths };
+function applyFinance(grossBenefit, investment) {
+  const netSavings    = grossBenefit - investment;
+  const roi           = investment > 0 ? netSavings / investment : 0;
+  const paybackMonths = grossBenefit > investment ? (investment / grossBenefit) * 12 : 0;
+  return { riskAdjustedBenefit: grossBenefit, netSavings, roi, paybackMonths };
 }
 
 /* ── Calculation ──────────────────────────────────────────────── */
@@ -462,7 +450,7 @@ function calcCuration(input) {
   const costWithout  = totalWithoutHours * input.hourlyRate;
   const costWith     = totalWithHours    * input.hourlyRate;
   const grossBenefit = costWithout - costWith;
-  const finance      = applyFinance(grossBenefit, pricing.annualInvestment, input.riskAdjustment);
+  const finance      = applyFinance(grossBenefit, pricing.annualInvestment);
 
   const stageLeakageCost = {};
   STAGE_KEYS.forEach((k) => { stageLeakageCost[k] = stageLeakageHours[k] * input.hourlyRate; });
@@ -481,19 +469,18 @@ function calcJAS(input) {
   const pricing     = computeUserBasedInvestment(input.jasUsers);
   const scaleFactor = (input.jasUsers / BASELINE_JAS_USERS) * (input.hourlyRate / BASELINE_HOURLY_RATE);
   const byCapability = Object.entries(JAS_COMPONENTS_BASE).map(([key, item]) => {
-    const gross        = item.annualValue * scaleFactor;
-    const riskAdjusted = gross * (1 - input.riskAdjustment / 100);
+    const gross = item.annualValue * scaleFactor;
     return {
       key,
       tKey:              item.tKey,
       grossCost:         gross,
-      riskAdjustedCost:  riskAdjusted,
-      riskAdjustedHours: riskAdjusted / input.hourlyRate,
+      riskAdjustedCost:  gross,
+      riskAdjustedHours: gross / input.hourlyRate,
     };
   });
 
   const grossBenefit = byCapability.reduce((sum, item) => sum + item.grossCost, 0);
-  const finance      = applyFinance(grossBenefit, pricing.annualInvestment, input.riskAdjustment);
+  const finance      = applyFinance(grossBenefit, pricing.annualInvestment);
 
   return {
     pricing, grossBenefit, ...finance,
@@ -547,7 +534,6 @@ function renderCurationReport(input, curation) {
   const topLabel = t(CURATION_CATEGORY_T_KEYS[top.key]);
   document.getElementById("curation-summary-list").innerHTML = [
     t("curationPricingLine")(INTEGER.format(curation.pricing.users), curation.pricing.units, USER_PACK_SIZE, CURRENCY.format(curation.pricing.annualInvestment)),
-    t("curationRiskLine")(CURRENCY.format(curation.riskAdjustedBenefit)),
     t("curationNetLine")(CURRENCY.format(curation.netSavings)),
     t("curationTopLine")(topLabel, CURRENCY.format(top.savedCost), INTEGER.format(top.savedHours)),
   ].map((line) => `<li>${line}</li>`).join("");
@@ -598,7 +584,6 @@ function renderJASReport(input, jas) {
   const topLabel = t(top.tKey);
   document.getElementById("jas-summary-list").innerHTML = [
     t("jasPricingLine")(INTEGER.format(jas.pricing.users), jas.pricing.units, USER_PACK_SIZE, CURRENCY.format(jas.pricing.annualInvestment)),
-    t("jasRiskLine")(CURRENCY.format(jas.riskAdjustedBenefit)),
     t("jasNetLine")(CURRENCY.format(jas.netSavings)),
     t("jasTopLine")(topLabel, CURRENCY.format(top.riskAdjustedCost), INTEGER.format(top.riskAdjustedHours)),
   ].map((line) => `<li>${line}</li>`).join("");

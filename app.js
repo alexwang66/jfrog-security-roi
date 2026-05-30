@@ -130,6 +130,39 @@ const T = {
     barJASBenefit:       "JAS annual benefit",
     barJASInvestment:    "Calculated JAS investment",
     barJASNet:           "Net annual JAS savings",
+    // Chart title tooltips
+    tipCurationChart1: "Compares total remediation cost without Curation vs. with Curation, showing the gross annual benefit and license investment.",
+    tipCurationChart2: "Breaks down hours and cost saved per OSS risk category when Curation blocks packages at the point of request.",
+    tipCurationChart3: "Shows how much remediation cost 'leaks' to each SDLC stage today without Curation. Issues caught later cost exponentially more to fix.",
+    tipJASChart1: "Compares the total JAS annual benefit against the license investment to show net annual savings.",
+    tipJASChart2: "Breaks down the productivity value delivered by each JAS capability, scaled to your user count and hourly rate.",
+    // Bar tooltips — Chart 1
+    tipNoCuration:        "Total hours and cost to fix all OSS issues manually across your SDLC — no early blocking in place.",
+    tipWithCuration:      "Hours and cost for your team to review and triage packages through JFrog Curation at request time (4 h/package).",
+    tipCurationBenefit:   "Gross annual benefit = no-Curation cost minus with-Curation cost. Does not yet subtract the license fee.",
+    tipCurationInvestment:"Annual Curation license cost based on user count, rounded up to the nearest 50-user pack at $27,000/pack.",
+    // Bar tooltips — Chart 2 categories
+    tipCatCriticalReplacement: "Packages with Critical/High CVEs that have no patch — must be fully replaced. Highest remediation effort.",
+    tipCatCriticalUpgrade:     "Packages with Critical/High CVEs where a patched version exists. Resolved by upgrading the dependency.",
+    tipCatBannedLicense:       "Packages whose license violates your policy (e.g. GPL in a commercial product). Requires replacement.",
+    tipCatUnmanaged:           "Unmaintained, deprecated, or high supply-chain-risk packages.",
+    tipCatMalicious:           "Packages confirmed to contain malicious code. Highest urgency — immediate removal and incident review required.",
+    // Bar tooltips — Chart 3 stages
+    tipStageIDE:     "Issues caught during coding. Cheapest to fix — developer is still in context (avg. 24 h for replacement).",
+    tipStageCommit:  "Issues caught at source commit. Slightly more expensive as context-switching is needed (avg. 28 h).",
+    tipStageBuild:   "Issues caught during CI/CD build. Fixing requires a new build cycle and re-test (avg. 36 h).",
+    tipStageStaging: "Issues caught in staging. Delays release and requires cross-team coordination (avg. 101 h).",
+    tipStageProd:    "Issues that reach production. Most expensive — hotfix, incident response, potential breach notification (avg. 493 h).",
+    // Bar tooltips — JAS Chart 1
+    tipJASBenefit:   "Total annual productivity value from all JAS capabilities, scaled to your user count and hourly rate.",
+    tipJASInvestment:"Annual JAS license cost based on user count, rounded up to the nearest 50-user pack.",
+    tipJASNet:       "Net annual savings = JAS annual benefit minus JAS license cost.",
+    // Bar tooltips — JAS Chart 2 capabilities
+    tipJasCatContextualDev:       "Reduces false positives by filtering non-reachable vulnerabilities, saving significant developer triage time.",
+    tipJasCatContextualSecOps:    "Helps security teams focus only on exploitable vulnerabilities, reducing investigation and reporting effort.",
+    tipJasCatK8sValidation:       "Automatically validates Kubernetes manifests and Helm charts against security policies before deployment.",
+    tipJasCatAppLibValidation:    "Scans Python and Node.js library configurations for known misconfigurations and security issues.",
+    tipJasCatTerraformValidation: "Validates Terraform IaC for security policy compliance before provisioning.",
     // Summary list sentence builders
     curationPricingLine: (users, units, pack, cost) =>
       `Curation pricing input: ${users} users (${units} × ${pack}-user packs) = ${cost}/year.`,
@@ -218,6 +251,39 @@ const T = {
     barJASBenefit:        "JAS年收益",
     barJASInvestment:     "JAS年度投资",
     barJASNet:            "JAS年净节省",
+    // Chart title tooltips
+    tipCurationChart1: "对比有/无Curation的总修复成本，展示年度收益和许可证投资。",
+    tipCurationChart2: "按OSS风险类别拆分Curation拦截后节省的工时和成本。",
+    tipCurationChart3: "展示当前没有Curation时，各SDLC阶段的修复成本泄漏。越晚发现问题，修复成本越高。",
+    tipJASChart1: "对比JAS年度总收益与许可证投资，展示年净节省。",
+    tipJASChart2: "按JAS各能力拆分生产力价值，数值已按用户数和工时费率换算。",
+    // Bar tooltips — Chart 1
+    tipNoCuration:        "在没有Curation拦截的情况下，手动修复所有OSS问题的总工时和成本。",
+    tipWithCuration:      "通过JFrog Curation在包请求时审核和分诊所需的工时和成本（平均4小时/包）。",
+    tipCurationBenefit:   "年度总收益 = 无Curation成本 - 有Curation成本。尚未扣除许可证费用。",
+    tipCurationInvestment:"根据用户数计算的年度Curation许可证费用，按50用户包向上取整，每包$27,000。",
+    // Bar tooltips — Chart 2 categories
+    tipCatCriticalReplacement: "存在关键/高危CVE且无补丁版本的包，需完全替换。修复工作量最大。",
+    tipCatCriticalUpgrade:     "存在关键/高危CVE但有修复版本的包，通过升级依赖解决。",
+    tipCatBannedLicense:       "许可证违反企业政策的包（如商业产品中使用GPL）。需要替换。",
+    tipCatUnmanaged:           "未维护、已废弃或供应链风险较高的包。",
+    tipCatMalicious:           "确认包含恶意代码的包。最高优先级——需立即移除并进行事件复盘。",
+    // Bar tooltips — Chart 3 stages
+    tipStageIDE:     "编码期间发现的问题。修复成本最低——开发者仍在上下文中（替换包平均24小时）。",
+    tipStageCommit:  "代码提交时发现的问题。需要上下文切换，略贵于IDE阶段（平均28小时）。",
+    tipStageBuild:   "CI/CD构建期间发现的问题。修复需要重新构建和测试（平均36小时）。",
+    tipStageStaging: "预发布阶段发现的问题。延迟发布周期，需跨团队协调（平均101小时）。",
+    tipStageProd:    "进入生产的问题。成本最高——热修复、事件响应、可能的安全通报（平均493小时）。",
+    // Bar tooltips — JAS Chart 1
+    tipJASBenefit:   "所有JAS能力的年度生产力价值总和，已按用户数和工时费率换算。",
+    tipJASInvestment:"根据用户数计算的年度JAS许可证费用，按50用户包向上取整。",
+    tipJASNet:       "年净节省 = JAS年度收益 - JAS许可证成本。",
+    // Bar tooltips — JAS Chart 2 capabilities
+    tipJasCatContextualDev:       "通过过滤不可达漏洞减少误报，大幅节省开发者分诊时间。",
+    tipJasCatContextualSecOps:    "帮助安全团队只关注可利用漏洞，减少调查和报告工作量。",
+    tipJasCatK8sValidation:       "在部署前自动验证Kubernetes清单和Helm Chart是否符合安全策略。",
+    tipJasCatAppLibValidation:    "扫描Python和Node.js库配置，发现已知错误配置和安全问题。",
+    tipJasCatTerraformValidation: "在资源创建前验证Terraform IaC是否符合安全策略。",
     // Summary list sentence builders
     curationPricingLine: (users, units, pack, cost) =>
       `Curation定价输入：${users}用户（${units}×${pack}用户包）= ${cost}/年。`,
@@ -244,12 +310,28 @@ const CURATION_CATEGORY_T_KEYS = {
   malicious:           "catMalicious",
 };
 
+const CURATION_CATEGORY_TIP_KEYS = {
+  criticalReplacement: "tipCatCriticalReplacement",
+  criticalUpgrade:     "tipCatCriticalUpgrade",
+  bannedLicense:       "tipCatBannedLicense",
+  unmanaged:           "tipCatUnmanaged",
+  malicious:           "tipCatMalicious",
+};
+
 const STAGE_T_KEYS = {
   ide:     "stageIDE",
   commit:  "stageCommit",
   build:   "stageBuild",
   staging: "stageStaging",
   prod:    "stageProd",
+};
+
+const STAGE_TIP_KEYS = {
+  ide:     "tipStageIDE",
+  commit:  "tipStageCommit",
+  build:   "tipStageBuild",
+  staging: "tipStageStaging",
+  prod:    "tipStageProd",
 };
 
 let currentLang = "en";
@@ -264,6 +346,11 @@ function applyI18n() {
     const key = el.dataset.i18n;
     const val = t(key);
     if (typeof val === "string") el.textContent = val;
+  });
+  document.querySelectorAll("[data-i18n-title]").forEach((el) => {
+    const key = el.dataset.i18nTitle;
+    const val = t(key);
+    if (typeof val === "string") el.dataset.tip = val;
   });
 }
 
@@ -510,8 +597,9 @@ function renderBars(containerId, items, defaultColor) {
   const maxCost   = Math.max(...items.map((item) => item.cost),  1);
   const rows = items.map((item) => {
     const width = (item.hours / maxHours) * 100;
+    const tipAttr = item.tooltip ? ` data-tip="${item.tooltip}"` : "";
     return `<div class="${item.rowClass}">
-      <span class="name">${item.label}</span>
+      <span class="name"${tipAttr}>${item.label}</span>
       <div class="bar-base"><div class="bar-fill ${item.colorClass || defaultColor}" style="width:${width}%"></div></div>
       <span class="value">${INTEGER.format(item.hours)} h | ${CURRENCY.format(item.cost)}</span>
     </div>`;
@@ -545,15 +633,16 @@ function renderCurationReport(input, curation) {
       CURRENCY.format(curation.netSavings));
 
   renderBars("curation-chart-before-after", [
-    { label: t("barNoCuration"),        hours: curation.totalWithoutHours,                                 cost: curation.costWithout,                rowClass: "compare-row", colorClass: "blue"  },
-    { label: t("barWithCuration"),      hours: curation.totalWithHours,                                    cost: curation.costWith,                   rowClass: "compare-row", colorClass: "green" },
-    { label: t("barCurationBenefit"),   hours: curation.riskAdjustedBenefit / input.hourlyRate,            cost: curation.riskAdjustedBenefit,        rowClass: "compare-row", colorClass: "mix"   },
-    { label: t("barCurationInvestment"),hours: curation.pricing.annualInvestment / input.hourlyRate,       cost: curation.pricing.annualInvestment,   rowClass: "compare-row", colorClass: "blue"  },
+    { label: t("barNoCuration"),        tooltip: t("tipNoCuration"),        hours: curation.totalWithoutHours,                           cost: curation.costWithout,              rowClass: "compare-row", colorClass: "blue"  },
+    { label: t("barWithCuration"),      tooltip: t("tipWithCuration"),      hours: curation.totalWithHours,                              cost: curation.costWith,                 rowClass: "compare-row", colorClass: "green" },
+    { label: t("barCurationBenefit"),   tooltip: t("tipCurationBenefit"),   hours: curation.riskAdjustedBenefit / input.hourlyRate,       cost: curation.riskAdjustedBenefit,      rowClass: "compare-row", colorClass: "mix"   },
+    { label: t("barCurationInvestment"),tooltip: t("tipCurationInvestment"),hours: curation.pricing.annualInvestment / input.hourlyRate,  cost: curation.pricing.annualInvestment, rowClass: "compare-row", colorClass: "blue"  },
   ], "blue");
 
   renderBars("curation-chart-breakdown",
     curation.byCategory.map((item) => ({
       label:      t(CURATION_CATEGORY_T_KEYS[item.key]),
+      tooltip:    t(CURATION_CATEGORY_TIP_KEYS[item.key]),
       hours:      item.savedHours,
       cost:       item.savedCost,
       rowClass:   "break-row",
@@ -563,6 +652,7 @@ function renderCurationReport(input, curation) {
   renderBars("curation-chart-stage-leakage",
     STAGE_KEYS.map((stage) => ({
       label:      t(STAGE_T_KEYS[stage]),
+      tooltip:    t(STAGE_TIP_KEYS[stage]),
       hours:      curation.stageLeakageHours[stage],
       cost:       curation.stageLeakageCost[stage],
       rowClass:   "stage-row",
@@ -595,14 +685,15 @@ function renderJASReport(input, jas) {
       CURRENCY.format(jas.netSavings));
 
   renderBars("jas-chart-before-after", [
-    { label: t("barJASBenefit"),   hours: jas.riskAdjustedBenefit / input.hourlyRate,      cost: jas.riskAdjustedBenefit,      rowClass: "compare-row", colorClass: "mix"   },
-    { label: t("barJASInvestment"),hours: jas.pricing.annualInvestment / input.hourlyRate, cost: jas.pricing.annualInvestment, rowClass: "compare-row", colorClass: "blue"  },
-    { label: t("barJASNet"),       hours: Math.max(jas.netSavings, 0) / input.hourlyRate,  cost: Math.max(jas.netSavings, 0),  rowClass: "compare-row", colorClass: "green" },
+    { label: t("barJASBenefit"),   tooltip: t("tipJASBenefit"),   hours: jas.riskAdjustedBenefit / input.hourlyRate,      cost: jas.riskAdjustedBenefit,      rowClass: "compare-row", colorClass: "mix"   },
+    { label: t("barJASInvestment"),tooltip: t("tipJASInvestment"),hours: jas.pricing.annualInvestment / input.hourlyRate, cost: jas.pricing.annualInvestment, rowClass: "compare-row", colorClass: "blue"  },
+    { label: t("barJASNet"),       tooltip: t("tipJASNet"),       hours: Math.max(jas.netSavings, 0) / input.hourlyRate,  cost: Math.max(jas.netSavings, 0),  rowClass: "compare-row", colorClass: "green" },
   ], "blue");
 
   renderBars("jas-chart-breakdown",
     jas.byCapability.map((item) => ({
       label:      t(item.tKey),
+      tooltip:    t("tip" + item.tKey.charAt(0).toUpperCase() + item.tKey.slice(1)),
       hours:      item.riskAdjustedHours,
       cost:       item.riskAdjustedCost,
       rowClass:   "break-row",

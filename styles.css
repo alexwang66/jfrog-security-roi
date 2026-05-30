@@ -591,6 +591,51 @@ button[type="submit"],
 .axis-tick.axis-start { transform: translateX(0); }
 .axis-tick.axis-end   { transform: translateX(-100%); }
 
+/* ── Hover tooltips ──────────────────────────────────────────── */
+[data-tip] {
+  position: relative;
+  cursor: help;
+}
+
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 6px);
+  z-index: 999;
+  background: #1B2D4F;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.55;
+  padding: 7px 11px;
+  border-radius: 3px;
+  width: 260px;
+  white-space: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+  transition: opacity 0.08s ease;
+}
+
+[data-tip]:hover::after {
+  opacity: 1;
+}
+
+/* Chart titles: tooltip appears below the heading */
+.chart-card h3[data-tip]::after {
+  bottom: auto;
+  top: calc(100% + 4px);
+}
+
+.name[data-tip] {
+  text-decoration: underline dotted var(--muted);
+  text-underline-offset: 2px;
+}
+
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 1080px) {
   .layout { grid-template-columns: 1fr; }

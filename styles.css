@@ -488,11 +488,11 @@ button[type="submit"],
 
 /* ── Insight box ─────────────────────────────────────────────── */
 .insight-box {
-  margin-bottom: 16px;
+  margin: 0 0 12px;
   border: 1px solid #F5A623;
   border-left: 4px solid #F5A623;
   background: #FFFBF0;
-  padding: 12px 14px;
+  padding: 10px 13px;
   border-radius: 0 3px 3px 0;
 }
 

@@ -1184,7 +1184,6 @@ function run() {
   }
 
   document.getElementById("report-subtitle").textContent =
-    `${t("scenarioLabel")}: ${INTEGER.format(input.annualPackagesManual)} ${t("ossPackages")}, ` +
     `${t("curationUsersCount")} ${INTEGER.format(input.curationUsers)}, ` +
     `${t("jasUsersCount")} ${INTEGER.format(input.jasUsers)}.`;
 

@@ -176,6 +176,8 @@ const T = {
       `Top Curation savings driver: ${name} (${cost} / ${hrs} h).`,
     curationSummaryBox:  (users, cost, net) =>
       `Curation annual investment: ${users} users => ${cost} per year. Expected net annual value: ${net}.`,
+    packageCountHint:    (pkgs, ratio) => `≈ ${pkgs} OSS packages/year (${ratio} per developer baseline)`,
+    curationScopeHint:   (pkgs, ratio, users) => `Analysis scope: ${pkgs} OSS packages/year estimated from ${users} developers (${ratio} packages/developer baseline).`,
     insightTitle:        "💡 Why is this the top savings driver?",
     insightUnmanaged:    (pct, upgradesPct, stagingH, replH) =>
       `<strong>Counterintuitive finding:</strong> Unmaintained/risky packages (${pct}% of your OSS portfolio) outrank high-profile CVEs because <strong>92% of CVE issues have upgrades available</strong> — cheap to fix (avg. ${stagingH}h at Staging). Unmaintained packages have no upgrade path and require full replacement (avg. ${replH}h at Staging). Curation blocks all of them at intake for just <strong>4 hours each</strong>, before they ever reach your pipeline.`,
@@ -226,6 +228,13 @@ const T = {
     assumptionsJASBaselineTitle: "JAS Baseline Parameters",
     assumptionsJASBaseline: (users, rate) => `Baseline: ${users.toLocaleString()} users, $${rate}/hr. Values are scaled by (userCount / ${users.toLocaleString()}) × (hourlyRate / ${rate}).`,
     assumptionsJASComponentsTitle: "JAS Component Baseline Values (Annual)",
+    assumptionsCalcTitle:    "How \"No Curation Remediation Cost\" Is Calculated",
+    assumptionsCalcNote:     (pkgs, ratio) => `Based on ${pkgs} OSS packages/year (${ratio} packages per developer). Each package category is multiplied by its remediation hours at each SDLC stage, weighted by the discovery probability at that stage.`,
+    assumptionsCalcCategory: "Risk Category",
+    assumptionsCalcCount:    "Packages",
+    assumptionsCalcHours:    "Hours Without Curation",
+    assumptionsCalcTotal:    "Total",
+    assumptionsCalcFormula:  "Formula: hours = package_count × stage_fix_time × discovery_probability. Summed across all stages and all categories.",
     // Feature 5: One-Pager
     onePagerBtn:        "One-Pager",
     onePagerTitle:      "JFrog Security ROI Summary",
@@ -353,6 +362,8 @@ const T = {
       `Curation最大节省驱动因素：${name}（${cost} / ${hrs}小时）。`,
     curationSummaryBox:  (users, cost, net) =>
       `Curation年度投入：${users}用户 => ${cost}/年。预期年净价值：${net}。`,
+    packageCountHint:    (pkgs, ratio) => `≈ ${pkgs} 个OSS软件包/年（基准：每位开发者 ${ratio} 个包）`,
+    curationScopeHint:   (pkgs, ratio, users) => `分析范围：基于 ${users} 名开发者，估算每年 ${pkgs} 个OSS软件包（每位开发者 ${ratio} 个包基准）。`,
     insightTitle:        "💡 为什么它是最大节省驱动因素？",
     insightUnmanaged:    (pct, upgradesPct, stagingH, replH) =>
       `<strong>反直觉发现：</strong>未维护/风险包（占OSS组合的${pct}%）超越高危CVE，原因是<strong>92%的CVE问题有现成补丁</strong>——修复成本低（Staging阶段平均${stagingH}小时）。而未维护包没有升级路径，必须完全替换（Staging阶段平均${replH}小时）。Curation在包引入时就全部拦截，每个仅需<strong>4小时</strong>，不需要等到流水线各阶段处理。`,
@@ -403,6 +414,13 @@ const T = {
     assumptionsJASBaselineTitle: "JAS 基准参数",
     assumptionsJASBaseline: (users, rate) => `基准：${users.toLocaleString()} 用户，$${rate}/小时。数值按（用户数 / ${users.toLocaleString()}）×（工时费率 / ${rate}）缩放。`,
     assumptionsJASComponentsTitle: "JAS 各能力基准价值（年度）",
+    assumptionsCalcTitle:    "「无Curation修复成本」是如何计算的",
+    assumptionsCalcNote:     (pkgs, ratio) => `基于每年 ${pkgs} 个OSS软件包（每位开发者 ${ratio} 个包）。每类风险包数量 × 各SDLC阶段修复时长 × 该阶段发现概率，求和得出总工时。`,
+    assumptionsCalcCategory: "风险类别",
+    assumptionsCalcCount:    "包数量",
+    assumptionsCalcHours:    "无Curation总工时",
+    assumptionsCalcTotal:    "合计",
+    assumptionsCalcFormula:  "公式：工时 = 包数量 × 阶段修复时长 × 发现概率。对所有阶段和所有类别求和。",
     // Feature 5: One-Pager
     onePagerBtn:        "一页摘要",
     onePagerTitle:      "JFrog 安全 ROI 摘要",
@@ -580,6 +598,8 @@ function syncAnnualPackagesFromCurationUsers() {
   if (!Number.isFinite(users) || users <= 0) return;
   const annualPackages = Math.max(1, Math.round(users * PACKAGES_PER_DEVELOPER_BASE));
   document.getElementById("annualPackagesManual").value = annualPackages;
+  const hint = document.getElementById("packageCountHint");
+  if (hint) hint.textContent = t("packageCountHint")(INTEGER.format(annualPackages), DECIMAL.format(PACKAGES_PER_DEVELOPER_BASE));
 }
 
 function parseNumber(id) {
@@ -868,13 +888,13 @@ function renderPerDevRoi(prefix, netSavings, userCount) {
 }
 
 /* ── Feature 3: Model Assumptions helpers ─────────────────────── */
-function renderCurationAssumptions() {
+function renderCurationAssumptions(input, curation) {
   const body = document.getElementById("curation-assumptions-body");
   if (!body) return;
 
   const dist = DISCOVERY_PROFILES.late;
   const stageRows = [
-    ["IDE/Code",             dist.ide   + "%"],
+    ["IDE/Code",             dist.ide    + "%"],
     ["Source Commit",        dist.commit + "%"],
     ["Build",                dist.build  + "%"],
     ["Staging (Promotion)",  dist.staging + "%"],
@@ -898,11 +918,43 @@ function renderCurationAssumptions() {
 
   const table2 = `<table class="assumptions-table">
     <caption>${t("assumptionsRemediationTitle")}</caption>
-    <thead><tr><th>Stage</th><th>Replacement</th><th>Upgrade</th><th>Malicious</th></tr></thead>
+    <thead><tr><th>Stage</th><th>Replacement (h)</th><th>Upgrade (h)</th><th>Malicious (h)</th></tr></thead>
     <tbody>${remRows.map(([s, r, u, m]) => `<tr><td>${s}</td><td>${r}</td><td>${u}</td><td>${m}</td></tr>`).join("")}</tbody>
   </table>`;
 
-  body.innerHTML = table1 + table2 + `<p class="assumptions-source">${t("assumptionsSource")}</p>`;
+  // Dynamic walkthrough: how totalWithoutHours is computed
+  let walkthrough = "";
+  if (input && curation) {
+    const ann   = curation.annualPackages;
+    const pkgRows = curation.byCategory.map(item => {
+      const label = t(CURATION_CATEGORY_T_KEYS[item.key]);
+      const withoutH = item.savedHours + item.savedHours * 0; // savedHours = without - with
+      // Recompute withoutHours per category for display
+      const catDef = {
+        criticalReplacement: { times: STAGE_TIMES.replacement, count: ann * CATEGORY_RATIO.criticalHigh * 0.08 },
+        criticalUpgrade:     { times: STAGE_TIMES.upgrade,     count: ann * CATEGORY_RATIO.criticalHigh * 0.92 },
+        bannedLicense:       { times: STAGE_TIMES.replacement, count: ann * CATEGORY_RATIO.bannedLicense },
+        unmanaged:           { times: STAGE_TIMES.replacement, count: ann * CATEGORY_RATIO.unmanaged },
+        malicious:           { times: STAGE_TIMES.malicious,   count: ann * CATEGORY_RATIO.malicious },
+      }[item.key];
+      if (!catDef) return "";
+      const wh = STAGE_KEYS.reduce((s, st) => s + catDef.count * catDef.times[st] * (dist[st] / 100), 0);
+      const cnt = DECIMAL.format(catDef.count);
+      return `<tr><td>${label}</td><td>${cnt}</td><td>${INTEGER.format(Math.round(wh))} h</td></tr>`;
+    }).join("");
+
+    walkthrough = `
+      <p class="assumptions-calc-title">${t("assumptionsCalcTitle")}</p>
+      <p class="assumptions-calc-note">${t("assumptionsCalcNote")(INTEGER.format(ann), DECIMAL.format(PACKAGES_PER_DEVELOPER_BASE))}</p>
+      <table class="assumptions-table">
+        <thead><tr><th>${t("assumptionsCalcCategory")}</th><th>${t("assumptionsCalcCount")}</th><th>${t("assumptionsCalcHours")}</th></tr></thead>
+        <tbody>${pkgRows}</tbody>
+        <tfoot><tr><td colspan="2"><strong>${t("assumptionsCalcTotal")}</strong></td><td><strong>${INTEGER.format(Math.round(curation.totalWithoutHours))} h</strong></td></tr></tfoot>
+      </table>
+      <p class="assumptions-calc-formula">${t("assumptionsCalcFormula")}</p>`;
+  }
+
+  body.innerHTML = table1 + table2 + walkthrough + `<p class="assumptions-source">${t("assumptionsSource")}</p>`;
 }
 
 function renderJASAssumptions(input) {
@@ -966,6 +1018,7 @@ function renderCurationReport(input, curation) {
   const top = curation.byCategory[0];
   const topLabel = t(CURATION_CATEGORY_T_KEYS[top.key]);
   document.getElementById("curation-summary-list").innerHTML = [
+    t("curationScopeHint")(INTEGER.format(curation.annualPackages), DECIMAL.format(PACKAGES_PER_DEVELOPER_BASE), INTEGER.format(curation.pricing.users)),
     t("curationPricingLine")(INTEGER.format(curation.pricing.users), curation.pricing.units, USER_PACK_SIZE, CURRENCY.format(curation.pricing.annualInvestment)),
     t("curationNetLine")(CURRENCY.format(curation.netSavings)),
     t("curationTopLine")(topLabel, CURRENCY.format(top.savedCost), INTEGER.format(top.savedHours)),
@@ -1018,7 +1071,7 @@ function renderCurationReport(input, curation) {
   renderInsight(curation);
 
   // Feature 3: Model Assumptions
-  renderCurationAssumptions();
+  renderCurationAssumptions(input, curation);
 }
 
 function renderJASReport(input, jas) {

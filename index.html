@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Curation ROI Executive Report</title>
-    <link rel="stylesheet" href="./styles.css?v=7" />
+    <link rel="stylesheet" href="./styles.css?v=8" />
   </head>
   <body>
     <!-- PDF Cover Page (hidden until export) -->
@@ -89,6 +89,7 @@
               <input id="curationUsers" type="number" min="1" step="1" />
               <small data-i18n="packPriceHint">$27,000 per 50 users/year (rounded up by user pack)</small>
               <small id="curationAnnualCostHint"></small>
+              <small id="packageCountHint" class="package-count-hint"></small>
             </label>
           </section>
 
@@ -328,6 +329,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="./app.js?v=7"></script>
+    <script src="./app.js?v=8"></script>
   </body>
 </html>

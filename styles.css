@@ -486,6 +486,17 @@ button[type="submit"],
   border-radius: 0 2px 2px 0;
 }
 
+/* ── Package count hint ──────────────────────────────────────── */
+.package-count-hint {
+  display: block;
+  margin-top: 3px;
+  color: var(--green-dk);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 /* ── Insight box ─────────────────────────────────────────────── */
 .insight-box {
   margin: 0 0 12px;
@@ -960,6 +971,39 @@ button[type="submit"],
   color: var(--muted);
   line-height: 1.5;
   font-style: italic;
+}
+
+/* ── Assumptions calc walkthrough ────────────────────────────── */
+.assumptions-calc-title {
+  margin: 14px 0 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+.assumptions-calc-note {
+  margin: 0 0 8px;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.assumptions-calc-formula {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.assumptions-table tfoot td {
+  border-top: 2px solid var(--border);
+  font-weight: 700;
+  background: var(--green-light);
 }
 
 /* ── Feature 5: One-Pager Overlay ────────────────────────────── */
